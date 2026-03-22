@@ -1,0 +1,28 @@
+# ----------------------------------
+# Pterodactyl Core Dockerfile
+# Environment: Java (Oracle GraalVM Enterprise)
+# ----------------------------------
+FROM container-registry.oracle.com/graalvm/jdk:24.0.2
+
+# Maintainer info
+LABEL maintainer="Your Name/Your Company"
+
+# Install Pterodactyl required dependencies using microdnf (Oracle Linux equivalent of apt-get)
+RUN microdnf update -y \
+    && microdnf install -y curl ca-certificates openssl git tar sqlite fontconfig tzdata iproute \
+    && microdnf clean all
+
+# Step 2 - Add the specific Pterodactyl User ('container')
+# Pterodactyl Wings requires this exact user, UID, and directory structure to run servers.
+RUN useradd -d /home/container -m container
+
+# Switch to the new container user
+USER container
+ENV USER=container HOME=/home/container
+WORKDIR /home/container
+
+# Copy over the entrypoint script required by Pterodactyl
+COPY ./entrypoint.sh /entrypoint.sh
+
+# The standard Pterodactyl boot command
+CMD ["/bin/bash", "/entrypoint.sh"]

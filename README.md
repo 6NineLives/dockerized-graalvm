@@ -41,3 +41,22 @@ If you prefer to operate via standard Docker Engine commands or are scripting an
 
 ### Executing Your Own Code
 Once you are ready to start building inside this container, open the `Dockerfile` and look for the commented out lines towards the bottom. To run an application, you just need to unleash the `COPY` instruction to bring your source files in, compile them with a `RUN` instruction, and execute the application with `CMD`.
+
+---
+
+## Pterodactyl Integration
+
+If you plan to use this isolated image natively within a **Pterodactyl Panel** game server environment, you must build utilizing the provided `Dockerfile.pterodactyl` instead. 
+
+This file operates identically (running GraalVM 24 Enterprise Edition), but comes correctly configured out of the box with Pterodactyl's strict system requirements (like the `iproute` package, the unprivileged `container` daemon user, and an `entrypoint.sh` command parser).
+
+**How to prep for Pterodactyl:**
+1. Build the image explicitly requesting the Pterodactyl file:
+   ```bash
+   docker build -f Dockerfile.pterodactyl -t your-docker-registry/pterodactyl-graalvm:24 .
+   ```
+2. Push the image to your public or private Docker registry:
+   ```bash
+   docker push your-docker-registry/pterodactyl-graalvm:24
+   ```
+3. Inside your **Pterodactyl Admin Panel**, create or edit your Egg, and define the 'Docker Image' property field with your newly pushed `your-docker-registry/pterodactyl-graalvm:24`.
