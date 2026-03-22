@@ -1,0 +1,5 @@
+services:
+  graalvm-env:
+    build: .
+    image: my-graalvm-app
+    container_name: graalvm-enterprise-test
